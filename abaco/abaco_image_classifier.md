@@ -18,6 +18,7 @@
 
 ## Getting Started
 
+More help documentation with sample actors at: https://github.com/shwetagopaul92/abaco
 ### With Python-SDK
 
 With the requirements in place, you are now ready to get started.
@@ -125,4 +126,94 @@ Grab the Execution ID
 
 ### To run synchronously
 
-### To run asynchronously
+```
+  $ curl -k -H "Authorization: Bearer $TOKEN" -d "message=https://s3.amazonaws.com/cdn-origin-etr.akc.org/wp-content/uploads/2017/11/12231410/Labrador-Retriever-On-White-01.jpg" https:/api.tacc.cloud/actors/v2/$ACTOR_ID/messages?_abaco_synchronous=true
+
+
+```
+
+Note: To send a synchronous message, the client appends abaco_synchronous=true query parameter to the request; the rest of the messaging semantics follows the rules and conventions of asynchronous messages.
+
+## Other examples:
+
+* With Python SDK
+
+Let's begin with a simple example of printing "hello-world" using an Abaco Actor.
+
+For this example, create a new local directory to hold your work.
+
+* A Basic Python File hello-world.py with a function to print the message (e.g: hello-world! ) sent to the actor when run.
+
+```
+  # hello-world.py
+
+  from agavepy.actors import get_context
+
+  # function to print the message
+  def echo_message(m):
+      print(m)
+
+  def main():
+    context = get_context()
+    message = context['raw_message']
+    echo_message(message)
+
+  if __name__ == '__main__':
+    main()
+
+```
+
+* Within the same directory, create a Dockerfile to register the function as an Abaco actor.
+
+```
+  FROM python:3.6
+
+  # install agavepy
+  RUN pip install --no-cache-dir agavepy
+
+  # add the python script to docker container
+  ADD hello.py /hello.py
+
+  # command to run the python script
+  CMD ["python", "/hello.py"]
+
+```
+
+* Build and push the docker image to Docker Hub.
+```
+
+  docker build -t user/hello-world-actor .
+
+  docker push user/hello-world-actor
+```
+
+* Register the Actor
+
+Register the Docker image as an Abaco actor with the Agave client.
+
+```
+  from agavepy.agave import Agave
+  ag = Agave(api_server='https://api.tacc.utexas.edu', token='<access_token>')
+  my_actor = {"image": "user/hello-world-actor", "name": "hello-world-actor", "description": "Simple actor to say hello- world."}
+  ag.actors.add(body=my_actor)
+```
+
+* Check the status of the actor :
+
+```
+  ag.actors.get(actorId='actorId')
+
+```  
+
+* Executing the Actor : Send a message
+```
+ag.actors.sendMessage(actorId='actorId', body={'message':'Hello-world!'})
+
+```
+
+* View the logs
+
+```
+ ag.actors.getExecutionLogs(actorId=actorId, executionId=executionId)
+
+```

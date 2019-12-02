@@ -1,0 +1,48 @@
+{
+  "id": "stampede2-executiontest-sgopal",
+  "name": "sgopal Stampede2 Execution System",
+  "description": "My test system for executing HPC jobs on stampede2 instance login3.stampede2.tacc.utexas.edu",
+  "status": "UP",
+  "type": "EXECUTION",
+  "executionType": "HPC",
+  "scheduler": "SGE",
+  "maxSystemJobs": 50,
+  "maxSystemJobsPerUser": 50,
+  "login": {
+    "host": "login1.stampede2.tacc.utexas.edu",
+    "port": 22,
+    "protocol": "SSH",
+    "proxy": null,
+    "auth": {
+      "publicKey": "",
+      "privateKey": "",
+      "username": "sgopal",
+      "type": "SSHKEYS"
+    }
+  },
+  "queues": [
+    {
+      "name":"normal",
+      "maxJobs":30,
+      "maxUserJobs":10,
+      "maxNodes":32,
+      "maxProcessorsPerNode":12,
+      "maxRequestedTime":"00:15:00",
+      "customDirectives":null,
+      "default":false
+    }
+  ],
+  "storage": {
+    "host": "login1.stampede2.tacc.utexas.edu",
+    "port": 22,
+    "protocol": "SFTP",
+    "rootDir": "/home/sgopal",
+    "homeDir": "/",
+    "auth": {
+      "publicKey": "",
+      "privateKey": "",
+      "username": "sgopal",
+      "type": "SSHKEYS"
+    }
+  }
+}
